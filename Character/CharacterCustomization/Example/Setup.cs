@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * Example script for Unity-Toolbox/CharacterCustomization
+ */
 public class Setup : MonoBehaviour
 {
 	[SerializeField] private Character _characterToCustomize;

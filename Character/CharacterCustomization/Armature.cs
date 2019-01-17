@@ -1,17 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
+/*
+ * A class that defines the bone structure of a character. Must be placed on the root bone (one level above hips/pelvis).
+ * 
+ * Copyright (c) 2019 Alexander Hjelm
+ * Part of the Unity-Toolbox repository
+ * https://github.com/Alexander-Hjelm/Unity-Toolbox/
+ */
 public class Armature : MonoBehaviour
-{
-	[SerializeField] private bool _isRootBone;
-	
+{	
 	private Armature targetArmature;
 	private Dictionary<string, Transform> _bonesByName = new Dictionary<string, Transform>();
 	
 	private void Awake()
 	{
+		// Add all transforms in children as bones
 		foreach (Transform boneTransform in GetComponentsInChildren<Transform>())
 		{
 			if (boneTransform != transform)
@@ -19,11 +24,7 @@ public class Armature : MonoBehaviour
 				_bonesByName.Add(boneTransform.name, boneTransform);
 			}
 		}
-
-		if (_isRootBone)
-		{
-			_bonesByName.Add(name, transform);
-		}
+		_bonesByName.Add(name, transform);	// Add the root bone
 	}
 
 	private void Start()
@@ -37,14 +38,21 @@ public class Armature : MonoBehaviour
 		UpdateBones();
 	}
 
+	/// <summary>
+	/// Set the armature that this armature will follow. This will copy the bone transforms.
+	/// </summary>
+	/// <param name="targetArmature">The target armature.</param>
 	public void SetTargetArmature(Armature targetArmature)
 	{
 		this.targetArmature = targetArmature;
 
-		// Armatures match exactly check
+		// Check that bone names match exactly
 		Assert.IsTrue(ArmatureExactMatch(this, targetArmature));
 	}
 
+	/// <summary>
+	/// Set position, rotation and scale of each bone to match the corresponding bone transform on the target armature.
+	/// </summary>
 	private void UpdateBones()
 	{
 		if (targetArmature)
@@ -58,6 +66,12 @@ public class Armature : MonoBehaviour
 		}
 	}
 
+	/// <summary>
+	/// Check if two armatures are exact copies, with respect to all bone names.
+	/// </summary>
+	/// <param name="a1">Armature 1</param>
+	/// <param name="a2">Armature 2</param>
+	/// <returns></returns>
 	private bool ArmatureExactMatch(Armature a1, Armature a2)
 	{
 		foreach (string boneKey in a1._bonesByName.Keys)
